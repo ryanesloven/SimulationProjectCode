@@ -1,17 +1,23 @@
+#include <queue>
 #ifndef InboundYard_h
 #define InboundYard_h
 class InboundYard{
-    int NumberTracks;
-    std::vector<InboundTrack> Tracks;
+    public:
+        int NumberTracks;
+        int TrainIDIncrement;
+        std::vector<InboundTrack> Tracks;
+        InboundYard(int NumTracks, int OutboundTrackNum);
+        void removeRailcar(Railcar inbound);
 };
 class InboundTrack{
-    int TrackNumber;
-    int available;
-    int TrackCapacity;
-    std::vector<Railcar> storedCars;
-    std::vector<int> storedTrains;
-    int temp;
-    InboundTrack();
-    void addRailcars(std::vector<Railcar> outbound);
+    public:
+        int TrackNumber;
+        int available;
+        int TrackCapacity;
+        std::queue<Railcar> storedCars;
+        std::vector<Train> storedTrains;
+        int temp;
+        InboundTrack(int ID, int OutboundTrackNumber, int TrainID);
+        void addRailcars(Train inbound);
 };
 #endif

@@ -18,12 +18,15 @@ class Railcar{
         void Repair();
 };
 class Train{
-    int TrainID;
-    int TrackNumber;
-    int length;
-    int carDestination; 
-    int carPrio;
-    std::vector<Railcar> Cars;
-    Train(int TrackNum, int ID);
+    public:
+        int TrainID;
+        int TrackNumber;
+        int length;
+        int carDestination; 
+        int carPrio;
+        int Destinations[];
+        int TotalPriority;
+        std::vector<Railcar> Cars;
+        Train(int TrackNum, int ID, int len);
 };
 #endif

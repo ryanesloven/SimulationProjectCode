@@ -1,24 +1,32 @@
 #include <random>
 #include <vector>
 #include "OutboundYard.h"
+#include "Driver.h"
 
 class Train{
-    int TrainID;
-    int TrackNumber;
-    int length;
-    int carDestination; 
-    int carPrio;
-    std::vector<Railcar> Cars;
-    Train(int TrackNum, int ID, OutboundYard Accessor){
-        for(int i = 0; i < length; i++){
-            carDestination = rand() % Accessor.getNumberTracks();
-            carPrio = rand() % 4;
-            Railcar temp(carDestination, carPrio, TrackNumber, ID);
-            Cars.push_back(temp);
-        }
-        TrainID = ID;
+    public:
+        int TrainID;
+        int TrackNumber;
+        int length;
+        int carDestination; 
+        int carPrio;
+        int TotalPriority = 0;
+        std::vector<Railcar> Cars;
+        int Destinations[];
+        Train(int TrackNum, int ID, int len){
+            length = len;
+            Destinations[TrackNum];
+            for(int i = 0; i < length; i++){
+                carDestination = rand() % TrackNum;
+                carPrio = rand() % 4;
+                Destinations[carDestination] +=1;
+                TotalPriority = TotalPriority + carPrio;
+                Railcar temp(carDestination, carPrio, TrackNumber, ID);
+                Cars.push_back(temp);
+            }
+            TrainID = ID;
 
-    }
+        }
 };
 
 class Railcar{
