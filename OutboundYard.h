@@ -7,8 +7,8 @@ class OutboundYard{
     public:
         OutboundYard(int TrackNumber);
         int getNumberTracks();
-        void addRailcar(Railcar outbound);
         void addTrain(Train outbound);
+        void addRailcar(Railcar outbound);
 };
 class OutboundTrack{
     int TrackNumber;
@@ -16,7 +16,7 @@ class OutboundTrack{
     int TrackCapacity;
     int TrackID;
     std::queue<Railcar> storedCars;
-    std::vector<int> storedTrains;
+    std::queue<Train> storedTrains;
     int temp;
     public:
         OutboundTrack(int ID);

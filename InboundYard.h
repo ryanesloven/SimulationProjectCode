@@ -6,8 +6,11 @@ class InboundYard{
         int NumberTracks;
         int TrainIDIncrement;
         std::vector<InboundTrack> Tracks;
+        int outboundTrackNum;
         InboundYard(int NumTracks, int OutboundTrackNum);
+        int addTrain();
         void removeRailcar(Railcar inbound);
+        void removeTrain(Train inbound);
 };
 class InboundTrack{
     public:
@@ -15,9 +18,10 @@ class InboundTrack{
         int available;
         int TrackCapacity;
         std::queue<Railcar> storedCars;
-        std::vector<Train> storedTrains;
+        std::queue<Train> storedTrains;
         int temp;
-        InboundTrack(int ID, int OutboundTrackNumber, int TrainID);
+        int outboundTrackNum; 
+        InboundTrack(int TrackID, int OutboundTrackNumber, int TrainID);
         void addRailcars(Train inbound);
 };
 #endif

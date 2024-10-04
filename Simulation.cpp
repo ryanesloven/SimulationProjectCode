@@ -35,179 +35,155 @@ class Simulation{
             }
         }
     }
-    void callPolicy(){
-        //"Option 1: TMP-Full
-        //"Option 2: TMP-Last
-        //"Option 3: TMP-Split
-        //resets local data for new iteration
-        RailcarsInboundYard.clear;
-        RailcarsOutboundYard.clear;
-        RailcarsOperation.clear;
-        TrainsClassified.clear;
-        TrainsUnclassified.clear;
 
-        if (policy == 1){
-            for(int i = 0; i < Inbound.NumberTracks; i++){
-                TrainsUnclassified.push_back(Inbound.Tracks[i].storedTrains);
-            }
-        }
-
-        else if (policy == 2){
-            for(int i = 0; i < Inbound.NumberTracks; i++){
-                TrainsUnclassified.push_back(Inbound.Tracks[i].storedTrains);
-            }
-            for(int i = 0; i < Inbound.Tracks.size(); i++){
-                RailcarsInboundYard.push_back(Inbound.Tracks[i].storedCars);
-            }
-        }
-
-        else if (policy == 3){ 
-            for(int i = 0; i < Inbound.Tracks.size(); i++){
-                RailcarsInboundYard.push_back(Inbound.Tracks[i].storedCars);
-            }
-        }
-        else{
-            std::cout << "Error has occurred.";
-        }
-        
-    }
-
-    void callGreedy(){
+    int callGreedy(){
         int max; //used to compare priority values of railcars and trains.
+        int carsSorted = 0;
         int index; //used to prevent unnecessary looping for queue/vector operations.
         int skip[]; //used to skip railcars whose destination track is full.
         auto start = std::chrono::high_resolution_clock::now();
         if (policy == 1){
+            //loads vector to hold available Train options for easy access
             max = 0;
             index = 0;
-            bool notValid = true; // used to indicate if the max is valid or not
-            int InvalidChoices;
+            bool ValidExists = true; // used to indicate if the max is valid or not
+            int InvalidChoices = 0;
             int findSkipIndex;
             //install checks for available space of tracks.
             
             //finds max priority of top value in queues.
-            while (notValid){
-                InvalidChoices = 0;
-                for (int i = 0; i < TrainsUnclassified.size(); i++){
+            while (ValidExists){
+                for (int i = 0; i < inbound.Tracks.size(); i++){
                     //ensures that the maximum, VALID railcar will be chosen
-                    if(TrainsUnclassified[i].front.TotalPriority > max && find(skip.begin(), skip.end(), i) != skip.end()){
-                        max = TrainsUnclassified[i].front;
+                    if(inbound.Tracks[i].storedTrains.front.TotalPriority > max && find(skip.begin(), skip.end(), i) == skip.end()){
+                        max = inbound.Tracks[i].storedTrains.front.TotalPriority;
                         index = i;
                     }
                     if (find(skip.begin(), skip.end(), i) != skip.end()){ //used to determine if no valid choices exist
                         InvalidChoices = InvalidChoices + 1;
                     }
-                    if (InvalidChoices == TrainsUnclassified.size()){
-                        std::cout << "No Valid Choices";
-                        break;
+                    //exits if no entire train can be classified validly.
+                    if (InvalidChoices >= inbound.Tracks.size()){
+                        //end sorting
+                        ValidExists = false;
+                        return;
                     }
                 }
                 //move railcar to outbound yard and remove from inbound yard, also updates local data
-                for(int i = 0; i < TrainsUnclassified[index].Destinations; i++){
-                    if(Outbound.Tracks[TrainsUnclassfieid[index].Cars[i].Destination].Available - 1 < 1){
+                for(int i = 0; i < inbound.Tracks[index].storedTrains.front.Cars.size(); i++){
+                    if(Outbound.Tracks[inbound.Tracks[index].storedTrains.front.Cars[i].Destination].Available - 1 < 1){
                         skip.append(index);
                     }
                 }
                 //checks that a valid option is chosen
                 findSkipIndex = std::find(skip.begin(), skip.end(), index);
                 if(findSkipIndex == skip.end()){
-                    notValid = false;
-                    Outbound.addTrain(TrainsUnclassified[index].front);
-                    Inbound.removeRailcars(TrainsUnclassified[index].front);
-                    TrainsUnclassified[index].pop; //removes railcar from local stored info
+                    //updates inbound and outbound yard with the train being removed and added respectively
+                    Outbound.addTrain(inbound.Tracks[index].storedTrains.front);
+                    Inbound.removeRailcars(inbound.Tracks[index].storedTrains.front);
+                    carsSorted += inbound.Tracks[index].storedTrains.front.Cars.size();
+                    Tracker.operationtime(inbound.Tracks[index].storedTrains.front.Cars.size());
                 }
             }
         }
         else if(policy == 2){
             max = 0;
             index = 0;
-            bool notValid = true; // used to indicate if the max is valid or not
-            int InvalidChoices;
+            bool ValidExists = true; // used to indicate if the max is valid or not
+            int InvalidChoices = 0;
             int findSkipIndex;
             //install checks for available space of tracks.
             
             //finds max priority of top value in queues.
-            while (notValid){
-                InvalidChoices = 0;
-                for (int i = 0; i < TrainsUnclassified.size(); i++){
+            while (ValidExists){
+                for (int i = 0; i < inbound.Tracks.size(); i++){
                     //ensures that the maximum, VALID railcar will be chosen
-                    if(TrainsUnclassified[i].front.TotalPriority > max && find(skip.begin(), skip.end(), i) != skip.end()){
-                        max = TrainsUnclassified[i].front;
+                    if(inbound.Tracks[i].storedTrains.front.TotalPriority > max && find(skip.begin(), skip.end(), i) == skip.end()){
+                        max = inbound.Tracks[i].storedTrains.front.TotalPriority;
                         index = i;
                     }
                     if (find(skip.begin(), skip.end(), i) != skip.end()){ //used to determine if no valid choices exist
                         InvalidChoices = InvalidChoices + 1;
                     }
-                    if (InvalidChoices == TrainsUnclassified.size()){
+                    if (InvalidChoices >= inbound.Tracks.size()){
                         std::cout << "No Valid Choices";
                         max = 0;
-                        for (int i = 0; i < TrainsUnclassified.size(); i++){
+                        for (int i = 0; i < inbound.Tracks.size(); i++){
                             //ensures that the maximum, railcar will be chosen
-                            if(TrainsUnclassified[i].front.Cars[0].Priority > max){
-                                max = TrainsUnclassified[i].front;
+                            if(inbound.Tracks[i].storedTrains.front.Cars[0].Priority > max){
+                                max = inbound.Tracks[i].storedTrains.front.Cars[0].Priority;
                                 index = i;
                             }
                         }
                         
-                        for (int i = 0; i < TrainsUnclassified[index].Cars.size(); i++){
-                            if(Outbound.Tracks[TrainsUnclassfieid[index].Cars[i].Destination].Available > 0){
-                                Outbound.Tracks[TrainsUnclassfieid[index].Cars[i].Destination].Available =-1;
-                                Outbound.addRailcar(RailcarsInboundYard[index].front);
-                                Inbound.removeRailcar(TrainsUnclassified[index].Cars[0]);
-                                TrainsUnclassified[index].Cars.erase(0); //removes railcar from local stored info
+                        for (int i = 0; i < inbound.Tracks[index].Cars.size(); i++){
+                            if(Outbound.Tracks[inbound.Tracks[index].storedTrains.front.Cars[i].Destination].Available - 1 > -1){
+                                Outbound.addRailcar(inbound.Tracks[index].storedTrains.front.Cars[i]);
+                                Inbound.removeRailcar(inbound.Tracks[index].storedTrains.front.Cars[i]);
+                                Tracker.operationtime(1);
+                                carsSorted += 1;
                             }
                             else{
-                                //exit gracefully/look at later
-                                break;
+                                ValidExists = false;
+                                return; // gracefully exit after classification done to best of ability
                             }
                         }
                     }
                 }
                 //move railcar to outbound yard and remove from inbound yard, also updates local data
-                for(int i = 0; i < TrainsUnclassified[index].Destinations; i++){
-                    if(Outbound.Tracks[i].available - TrainsUnclassified[index].Destinations[i] < 1){
+                for(int i = 0; i < inbound.Tracks[index].storedTrains.front.Cars.size(); i++){
+                    if(Outbound.Tracks[inbound.Tracks[index].storedTrains.front.Cars[i].Destination].Available - 1 < 1){
                         skip.append(index);
                     }
                 }
+                //checks that a valid option is chosen
                 findSkipIndex = std::find(skip.begin(), skip.end(), index);
                 if(findSkipIndex == skip.end()){
-                    notValid = false;
-                    Outbound.addTrain(TrainsUnclassified[index].front);
-                    Inbound.removeRailcars(TrainsUnclassified[index].front);
-                    TrainsUnclassified[index].pop; //removes railcar from local stored info
+                    //updates inbound and outbound yard with the train being removed and added respectively
+                    Outbound.addTrain(inbound.Tracks[index].storedTrains.front);
+                    Inbound.removeRailcars(inbound.Tracks[index].storedTrains.front);
+                    carsSorted += inbound.Tracks[index].storedTrains.front.Cars.size();
+                    Tracker.operationtime(inbound.Tracks[index].storedTrains.front.Cars.size());
                 }
         }
         }
         else if (policy == 3){
             max = 0;
             index = 0;
-            bool notValid = true; // used to indicate if the max is valid or not
+            bool ValidExists = true; // used to indicate if the max is valid or not
 
             //install checks for available space of tracks.
             
             //finds max priority of top value in queues.
-            while (notValid){
-                for (int i = 0; i < RailcarsInboundYard.size(); i++){
+            while (ValidExists){
+                for (int i = 0; i < inbound.Tracks.size(); i++){
                     //ensures that the maximum, VALID railcar will be chosen
-                    if(RailcarsInboundYard[i].front > max && find(skip.begin(), skip.end(), i) != skip.end()){
-                        max = RailcarsInboundYard[i].front;
+                    if(inbound.Tracks[i].storedTrains.Cars.front.Priority > max && find(skip.begin(), skip.end(), i) == skip.end()){
+                        max = inbound.Tracks[i].storedTrains.front.Cars.front.Priority;
                         index = i;
                     }
                 }
-                //move railcar to outbound yard and remove from inbound yard, also updates local data
-                if(Outbound.Tracks[RailcarsInboundYard[index].destination].available < 1){
+                //stops classifying if no railcars can be sorted validly
+                if(skip.size() >= inbound.Tracks.size()){
+                    ValidExists = false;
+                    return;
+                }
+                //checks if railcar can be placed in the outbound track.
+                if(Outbound.Tracks[inbound.Tracks[index].storedTrains.front.Cars.front.Destination].available - 1 < 1){
                     skip.append(index);
                 }
                 else{
-                    notValid = false;
-                    Outbound.addRailcar(RailcarsInboundYard[index].front);
-                    Inbound.removeRailcar(RailcarsInboundYard[index].front);
-                    RailcarsInboundYard[i].pop; //removes railcar from local stored info
+                    Outbound.addRailcar(inbound.Tracks[index].storedTrains.front.Cars.front);
+                    Inbound.removeRailcar(inbound.Tracks[index].storedTrains.front.Cars.front);
+                    carsSorted += 1;
+                    Tracker.operationtime(1);
                 }
             }
         }
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
         Tracker.functionTime(duration);
+        Tracker.operationTime(carsSorted);
+        return carsSorted*10;
     }
 }

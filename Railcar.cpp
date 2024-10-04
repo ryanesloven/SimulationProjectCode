@@ -11,9 +11,9 @@ class Train{
         int carDestination; 
         int carPrio;
         int TotalPriority = 0;
-        std::vector<Railcar> Cars;
+        std::queue<Railcar> Cars;
         int Destinations[];
-        Train(int TrackNum, int ID, int len){
+        Train(int TrackID, int TrainID, int len){
             length = len;
             Destinations[TrackNum];
             for(int i = 0; i < length; i++){
@@ -21,8 +21,8 @@ class Train{
                 carPrio = rand() % 4;
                 Destinations[carDestination] +=1;
                 TotalPriority = TotalPriority + carPrio;
-                Railcar temp(carDestination, carPrio, TrackNumber, ID);
-                Cars.push_back(temp);
+                Railcar temp(carDestination, carPrio, TrackID, TrainID);
+                Cars.push(temp);
             }
             TrainID = ID;
 

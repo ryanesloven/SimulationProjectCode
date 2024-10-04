@@ -22,19 +22,20 @@ class InboundYard{
             }
         }
 
-        void addTrain(){
+        int addTrain(){
+            int TrackID = rand() % Tracks.size();
             int length = rand() % 66;
-            Train inbound(outboundTrackNum, TrainIDIncrement, length);
+            Train inbound(TrackID, TrainIDIncrement, length);
             TrainIDIncrement++;
             storedTrains.push_back(inbound);
             for (int i = 0; inbound.Cars.size(); i++){
                 storedCars.push(inbound.Cars[i]);
             }
-            available = available - inbound.Cars.size();
+            return inbound.Cars.size();
         }
         void removeRailcar(Railcar inbound){
             int temp = std::find(Tracks[inboudn.TrackNumber].storedTrains[0].Cars.start, Tracks[inboudn.TrackNumber].storedTrains[0].Cars.end, inbound);
-            Tracks[inboudn.TrackNumber].storedTrains[0].Cars.erase(temp);
+            Tracks[inbound.TrackNumber].storedTrains[inbound.TrainID].Cars.erase(temp);
             Tracks[inbound.TrackNumber].storedCars.pop;
 
         }
@@ -54,21 +55,20 @@ class InboundTrack{
         int available;
         int TrackCapacity;
         std::queue<Railcar> storedCars;
-        std::vector<Train> storedTrains;
+        std::queue<Train> storedTrains;
         int temp;
         int outboundTrackNum; 
 
-        InboundTrack(int ID, int OutboundTrackNumber, int TrainID){
+        InboundTrack(int TrackID, int OutboundTrackNumber, int TrainID){
             TrackCapacity = 65;
             outboundTrackNum = OutboundTrackNumber;
             available = 65;
             TrackNumber = ID;
-            storedTrains.push_back(TrainID);
             int chance = rand() % 3;
             int length = rand() % 66;
             if (chance!=0){
                 Train inbound(OutboundTrackNumber, TrackNumber, length);
-                storedTrains.push_back(inbound);
+                storedTrains.push(inbound);
                 for (int i = 0; inbound.Cars.size(); i++){
                     storedCars.push(inbound.Cars[i]);
                 }

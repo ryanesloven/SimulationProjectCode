@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <thread>
 #include "Railcar.h"
 #include "InboundYard.h"
 #include "OutboundYard.h"
@@ -15,6 +16,7 @@ class Driver{
         int policy = 1;
         int algorithm = 1;
         int SimulationTimer = 28800;
+        int currentTime = 0;
         InboundYard Inbound();
         OutboundYard Outbound();
         Simulation Sim();
@@ -35,8 +37,7 @@ class Driver{
             std::cout << "What algorithm will be used for this run of the simulation?";
             std::cout << "Option 1: Dynamic Programming";
             std::cout << "Option 2: Greedy";
-            std::cout << "Option 3: Branch&Bound";
-            std::cout << "Enter a number corresponding to desired algorithm (1, 2, or 3).";
+            std::cout << "Enter a number corresponding to desired algorithm (1 or 2).";
             std::cin >> algorithm;
         }
         void start(){
@@ -46,11 +47,20 @@ class Driver{
             Simulation Sim(policy, algorithm, Inbound, Outbound, Track);
             Arrival Arrive(Inbound, Track, SimulationTimer);
             //Code that setsup first trains. 
-            while (DataTracker.Time < SimulationTimer){
-                
+
+            while (currentTime < SimulationTimer){
+                if(algorithm == 1){
+                    currentTime =+ Sim.callGreedy();
+                    currentTime =+ Arrive.forecast();
+                }
+                else if(algorithm == 2){
+                    currentTime =+ Sim.callDynamic();
+                    currentTime =+ Arrive.forecast();
+                }
             }
-
-
         }
-
+        int main(){
+            getSettings();
+            start();
+        }
 };

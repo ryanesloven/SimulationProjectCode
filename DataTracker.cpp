@@ -2,7 +2,6 @@
 #include<chrono>
 #include <fstream>
 class DataTracker{
-    double Time = 0;
     std::string FunctionDataStorage = "FunctionDataStore.txt";
     std::string OperationDataStorage = "OperationDataStore.txt";
     std::fstream Function;
@@ -13,15 +12,9 @@ class DataTracker{
     }
     void operationTime(int carsProcessed){
         Time = Time + carsProcessed * 10;
+        Operation << "Cars Processed: " << carsProcessed << "\n";
     }
     void functionTime(auto duration){
-        Function << duration.count() << " milliseconds\n";
-        Time = Time + duration.count() / 1000;
-    }
-    double getCurrentTime(){
-        return Time;
-    }
-    void updateDataStorage(){
-         
+        Function << "Classification Time: "<<duration.count() << " milliseconds\n";
     }
 };

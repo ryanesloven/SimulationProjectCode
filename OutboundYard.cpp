@@ -26,7 +26,7 @@ class OutboundYard{
             }
         }
         void addRailcar(Railcar outbound){
-            Tracks[outbound.Destination].pushback(outbound);
+            Tracks[outbound.Destination].push(outbound);
             Tracks[outbound.Destination].available = Tracks[outbound.Destination].available - 1;
         }
 };
@@ -36,7 +36,7 @@ class OutboundTrack{
     int TrackCapacity;
     int TrackID;
     std::queue<Railcar> storedCars;
-    std::vector<Train> storedTrains;
+    std::queue<Train> storedTrains;
     int temp;
     public:
         OutboundTrack(int ID){

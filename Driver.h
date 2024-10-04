@@ -14,11 +14,16 @@ class Driver{
         int outboundTrackNum;
         int policy;
         int algorithm;
-        void getSettings();
-        void start();
+        int SimulationTimer;
+        int currentTime;
         InboundYard Inbound();
         OutboundYard Outbound();
         Simulation Sim();
         DataTracker Track();
+
+        //std::vector<Railcar> 
+        void getSettings();
+        void start();
+
 };
 #endif
